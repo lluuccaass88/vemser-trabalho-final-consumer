@@ -19,24 +19,28 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumidorService {
 
     private final ObjectMapper objectMapper;
-
+    private final EmailService emailService;
 
     @KafkaListener(
             topics = "${kafka.topic}",
             groupId = "${kafka.group-id}",
             topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"0"})},
-            containerFactory = "listenerContainerFactory1"
+            containerFactory = "listenerContainerFactory"
     )
-    public void consumeChatGeral(@Payload String mensagem, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition) throws JsonProcessingException {
+    public void consumeEmailPossiveisClientes(@Payload String mensagem,
+                                              @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
         try {
             PossiveisClientesDTO possiveisClientesDTO = objectMapper.readValue(mensagem, PossiveisClientesDTO.class);
 
-//        log.info("Mensagem geral: " + mensagemDTO.getDataCriacao() + " [" + mensagemDTO.getUsuario() + "] " +  );
+            emailService.enviarEmailPossivelCliente(possiveisClientesDTO);
+
             log.info("Nome: {} Email: {} ", possiveisClientesDTO.getNome(), possiveisClientesDTO.getEmail());
+            log.info("consumi: " + mensagem);
+
         }catch (Exception e){
-            System.out.println("Alguma mensagem de erro");
+            e.printStackTrace();
+            log.error("Error consumeEmailPossiveisClientes");
         }
     }
-
-
 }
