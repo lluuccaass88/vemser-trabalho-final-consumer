@@ -16,12 +16,11 @@
         <br>Gostaríamos de expressar nossa alegria pelo seu interesse em nossos serviços.
         <br>
         <br>
-        <br>Estamos animados com a possibilidade dajudar você a alcançar seus objetivos. Em breve um de nossos funcionários entrará em contato
-        <br>responder quaisquer perguntas ou dúvidas que você possa ter sobre nossos serviços.
+        <br>Estamos animados com a possibilidade de ajudar você a alcançar seus objetivos. Em breve um de nossos funcionários entrará em contato para responder quaisquer perguntas ou dúvidas que você possa ter sobre nossos serviços.
         <br>
         <br>
         <br>
-        <br>Qualquer duvida é só contatar o suporte pelo email ->  ${emailContato}
+        <br>Qualquer dúvida é só contatar o suporte pelo email ->  ${emailContato}
         <br>
         <br>
         <br>

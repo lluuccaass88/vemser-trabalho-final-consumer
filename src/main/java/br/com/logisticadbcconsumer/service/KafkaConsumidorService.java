@@ -1,6 +1,7 @@
 package br.com.logisticadbcconsumer.service;
 
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
+import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,32 @@ public class KafkaConsumidorService {
 
             emailService.enviarEmailPossivelCliente(possiveisClientesDTO);
 
-            log.info("Nome: {} Email: {} ", possiveisClientesDTO.getNome(), possiveisClientesDTO.getEmail());
-            log.info("consumi: " + mensagem);
+            log.info("Partition " + partition +
+                    " | Email: {} ", possiveisClientesDTO.getEmail());
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Error consumeEmailPossiveisClientes");
+        }
+    }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"1"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailBoasVindas(@Payload String mensagem,
+                                              @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+            UsuarioBoasVindasDTO usuarioBoasVindasDTO = objectMapper.readValue(mensagem, UsuarioBoasVindasDTO.class);
+
+            emailService.enviarEmailBoasVindas(usuarioBoasVindasDTO);
+
+            log.info("Partition " + partition +
+                    " | Email: {} ", usuarioBoasVindasDTO.getEmail());
+
+        }catch (Exception e){
             log.error("Error consumeEmailPossiveisClientes");
         }
     }

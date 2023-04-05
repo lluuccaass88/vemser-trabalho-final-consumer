@@ -1,6 +1,7 @@
 package br.com.logisticadbcconsumer.service;
 
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
+import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -30,28 +31,60 @@ public class EmailService {
     private static String NOME_LOG = "TruckLog";
     private static String EMAIL_LOG = "trucklog@email.com";
 
-   /* public void enviarEmailBoasVindas(UsuarioEntity usuario) throws RegraDeNegocioException {
+    public void enviarEmailPossivelCliente(PossiveisClientesDTO possiveisClientesDTO) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(usuario.getEmail());
-            mimeMessageHelper.setSubject("Bem vindo ao " + NOME_LOG);
-            mimeMessageHelper.setText(getBoasVindasTemplate(usuario), true);
+            mimeMessageHelper.setTo(possiveisClientesDTO.getEmail());
+            mimeMessageHelper.setSubject("Contato com o clinte");
+
+            mimeMessageHelper.setText(geEmailPossivelClienteTemplate(possiveisClientesDTO.getEmail(),
+                    possiveisClientesDTO.getNome()), true);
 
             emailSender.send(mimeMessageHelper.getMimeMessage());
-        } catch (MessagingException | IOException | TemplateException | NullPointerException e) {
-            throw new RegraDeNegocioException("Erro ao enviar email.");
+
+        } catch (MessagingException | IOException | TemplateException e) {
+            log.error("Error enviarEmailPossivelCliente");
         }
     }
 
-    private String getBoasVindasTemplate(UsuarioEntity usuario)
+    private String geEmailPossivelClienteTemplate(String email, String nome)
             throws IOException, TemplateException {
 
         Map<String, Object> dados = new HashMap<>();
-        dados.put("nomeUsuario", usuario.getNome());
-        dados.put("emailUsuario", usuario.getEmail());
-        dados.put("cargoUsuario", usuario.getCargos());
+        dados.put("usuarioNome", nome);
+        dados.put("usuarioEmail", email);
+        dados.put("emailContato", EMAIL_LOG);
+        dados.put("nome", NOME_LOG);
+
+        Template template = fmConfiguration.getTemplate("email-template-email-possivel-cliente.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+        return html;
+    }
+
+    public void enviarEmailBoasVindas(UsuarioBoasVindasDTO usuarioBoasVindasDTO) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(usuarioBoasVindasDTO.getEmail());
+            mimeMessageHelper.setSubject("Bem vindo ao " + NOME_LOG);
+            mimeMessageHelper.setText(getBoasVindasTemplate(usuarioBoasVindasDTO), true);
+
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException | IOException | TemplateException | NullPointerException e) {
+            log.error("Error enviarEmailPossivelCliente");
+        }
+    }
+
+    private String getBoasVindasTemplate(UsuarioBoasVindasDTO usuarioBoasVindasDTO)
+            throws IOException, TemplateException {
+
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("nomeUsuario", usuarioBoasVindasDTO.getNome());
+        dados.put("loginUsuario", usuarioBoasVindasDTO.getLogin());
+        dados.put("cargoUsuario", usuarioBoasVindasDTO.getNomeCargo());
         dados.put("emailContato", EMAIL_LOG);
         dados.put("nome", NOME_LOG);
 
@@ -60,8 +93,7 @@ public class EmailService {
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
-
-    public void enviarEmailViagem(RotaEntity rota, ViagemEntity viagem, UsuarioEntity motorista) throws RegraDeNegocioException {
+   /* public void enviarEmailViagem(RotaEntity rota, ViagemEntity viagem, UsuarioEntity motorista) throws RegraDeNegocioException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -128,40 +160,7 @@ public class EmailService {
         Template template = fmConfiguration.getTemplate("email-template-recupera-senha.ftl"); //TODO trocar o template
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
         return html;
-    }
-*/
-    public void enviarEmailPossivelCliente(PossiveisClientesDTO possiveisClientesDTO) {
-        MimeMessage mimeMessage = emailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(possiveisClientesDTO.getEmail());
-            mimeMessageHelper.setSubject("Contato com o clinte");
-
-            mimeMessageHelper.setText(geEmailPossivelClienteTemplate(possiveisClientesDTO.getEmail(),
-                    possiveisClientesDTO.getNome()), true);
-
-            emailSender.send(mimeMessageHelper.getMimeMessage());
-
-        } catch (MessagingException | IOException | TemplateException e) {
-            log.error("Error enviarEmailPossivelCliente");
-        }
-    }
-
-    private String geEmailPossivelClienteTemplate(String email, String nome)
-            throws IOException, TemplateException {
-
-        Map<String, Object> dados = new HashMap<>();
-        dados.put("usuarioNome", nome);
-        dados.put("usuarioEmail", email);
-        dados.put("emailContato", EMAIL_LOG);
-        dados.put("nome", NOME_LOG);
-
-        Template template = fmConfiguration.getTemplate("email-template-email-possivel-cliente.ftl");
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
-        return html;
-    }
-
+    }*/
 }
 
 
