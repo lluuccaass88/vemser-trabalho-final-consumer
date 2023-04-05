@@ -2,6 +2,7 @@ package br.com.logisticadbcconsumer.service;
 
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
+import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,10 @@ public class KafkaConsumidorService {
             emailService.enviarEmailPossivelCliente(possiveisClientesDTO);
 
             log.info("Partition " + partition +
-                    " | Email: {} ", possiveisClientesDTO.getEmail());
+                    "  | consumeEmailPossiveisClientes | Email: {} ", possiveisClientesDTO.getEmail());
 
         }catch (Exception e){
-            log.error("Error consumeEmailPossiveisClientes");
+            log.error("Error | consumeEmailPossiveisClientes");
         }
     }
 
@@ -51,7 +52,7 @@ public class KafkaConsumidorService {
             containerFactory = "listenerContainerFactory"
     )
     public void consumeEmailBoasVindas(@Payload String mensagem,
-                                              @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+                                       @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
             throws JsonProcessingException {
         try {
             UsuarioBoasVindasDTO usuarioBoasVindasDTO = objectMapper.readValue(mensagem, UsuarioBoasVindasDTO.class);
@@ -59,10 +60,32 @@ public class KafkaConsumidorService {
             emailService.enviarEmailBoasVindas(usuarioBoasVindasDTO);
 
             log.info("Partition " + partition +
-                    " | Email: {} ", usuarioBoasVindasDTO.getEmail());
+                    " | consumeEmailBoasVindas | Email: {} ", usuarioBoasVindasDTO.getEmail());
 
         }catch (Exception e){
-            log.error("Error consumeEmailPossiveisClientes");
+            log.error("Error | consumeEmailBoasVindas");
+        }
+    }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"2"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailRecuperarSenha(@Payload String mensagem,
+                                           @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+            UsuarioRecuperaSenhaDTO usuarioRecuperaSenhaDTO = objectMapper.readValue(mensagem, UsuarioRecuperaSenhaDTO.class);
+
+            emailService.enviarEmailRecuperarSenha(usuarioRecuperaSenhaDTO);
+
+            log.info("Partition " + partition +
+                    " | consumeEmailRecuperarSenha | Email: {} ", usuarioRecuperaSenhaDTO.getEmail());
+
+        }catch (Exception e){
+            log.error("Error | consumeEmailRecuperarSenha");
         }
     }
 }

@@ -2,6 +2,7 @@ package br.com.logisticadbcconsumer.service;
 
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
+import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -93,7 +94,39 @@ public class EmailService {
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
-   /* public void enviarEmailViagem(RotaEntity rota, ViagemEntity viagem, UsuarioEntity motorista) throws RegraDeNegocioException {
+
+    public void enviarEmailRecuperarSenha(UsuarioRecuperaSenhaDTO usuarioRecuperaSenhaDTO) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(usuarioRecuperaSenhaDTO.getEmail());
+            mimeMessageHelper.setSubject("Recuperação de senha");
+
+            mimeMessageHelper.setText(geRecuperarSenhaTemplate(usuarioRecuperaSenhaDTO), true);
+
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (MessagingException | IOException | TemplateException e) {
+            log.error("Error enviarEmailRecuperarSenha");
+        }
+    }
+
+    private String geRecuperarSenhaTemplate(UsuarioRecuperaSenhaDTO usuarioRecuperaSenhaDTO)
+            throws IOException, TemplateException {
+
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("senhaTemporaria", usuarioRecuperaSenhaDTO.getSenha());
+        dados.put("usuarioNome", usuarioRecuperaSenhaDTO.getNome());
+        dados.put("emailContato", EMAIL_LOG);
+        dados.put("nome", NOME_LOG);
+
+        Template template = fmConfiguration.getTemplate("email-template-recupera-senha.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+        return html;
+    }
+
+    /*public void enviarEmailViagem(RotaEntity rota, ViagemEntity viagem, UsuarioEntity motorista) throws RegraDeNegocioException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -127,39 +160,6 @@ public class EmailService {
 
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
-    }
-
-    public void enviarEmailRecuperarSenha(UsuarioEntity usuario, String senhaTemporaria) throws RegraDeNegocioException {
-        MimeMessage mimeMessage = emailSender.createMimeMessage();
-        Integer op = 2;
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(usuario.getEmail());
-            mimeMessageHelper.setSubject("Recuperação de senha");
-
-            mimeMessageHelper.setText(geRecuperarSenhaTemplate(usuario, senhaTemporaria), true);
-
-            emailSender.send(mimeMessageHelper.getMimeMessage());
-
-        } catch (MessagingException | IOException | TemplateException e) {
-            e.printStackTrace();
-            throw new RegraDeNegocioException("Erro ao enviar email de recuperação de senha");
-        }
-    }
-
-    private String geRecuperarSenhaTemplate(UsuarioEntity usuario, String senhaTemporaria)
-            throws IOException, TemplateException {
-
-        Map<String, Object> dados = new HashMap<>();
-        dados.put("senhaTemporaria", senhaTemporaria);
-        dados.put("usuarioNome", usuario.getNome());
-        dados.put("emailContato", EMAIL_LOG);
-        dados.put("nome", NOME_LOG);
-
-        Template template = fmConfiguration.getTemplate("email-template-recupera-senha.ftl"); //TODO trocar o template
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
-        return html;
     }*/
 }
 
