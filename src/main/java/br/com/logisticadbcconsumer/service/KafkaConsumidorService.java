@@ -1,9 +1,6 @@
 package br.com.logisticadbcconsumer.service;
 
-import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
-import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
+import br.com.logisticadbcconsumer.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +38,7 @@ public class KafkaConsumidorService {
             log.info("Partition " + partition +
                     "  | consumeEmailPossiveisClientes | Email: {} ", possiveisClientesDTO.getEmail());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error | consumeEmailPossiveisClientes");
         }
     }
@@ -63,7 +60,7 @@ public class KafkaConsumidorService {
             log.info("Partition " + partition +
                     " | consumeEmailBoasVindas | Email: {} ", usuarioBoasVindasDTO.getEmail());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error | consumeEmailBoasVindas");
         }
     }
@@ -85,7 +82,7 @@ public class KafkaConsumidorService {
             log.info("Partition " + partition +
                     " | consumeEmailRecuperarSenha | Email: {} ", usuarioRecuperaSenhaDTO.getEmail());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error | consumeEmailRecuperarSenha");
         }
     }
@@ -97,7 +94,7 @@ public class KafkaConsumidorService {
             containerFactory = "listenerContainerFactory"
     )
     public void consumeEmailViagem(@Payload String mensagem,
-                                           @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+                                   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
             throws JsonProcessingException {
         try {
             ViagemCriadaDTO viagemCriadaDTO = objectMapper.readValue(mensagem, ViagemCriadaDTO.class);
@@ -107,8 +104,28 @@ public class KafkaConsumidorService {
             log.info("Partition " + partition +
                     " | consumeEmailViagem | Email: {} ", viagemCriadaDTO.getEmail());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error | consumeEmailViagem");
+        }
+    }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"4"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailAdminPossiveisClientes(@Payload String mensagem,
+                                  @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+
+            emailService.enviarEmailAdminPossiveisClientes(mensagem);
+
+            log.info("Partition " + partition + " | consumeEmailAdminPossiveisClientes");
+
+        } catch (Exception e) {
+            log.error("Error | consumeEmailAdminPossiveisClientes");
         }
     }
 }

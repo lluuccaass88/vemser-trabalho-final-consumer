@@ -1,9 +1,6 @@
 package br.com.logisticadbcconsumer.service;
 
-import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
-import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
+import br.com.logisticadbcconsumer.dto.*;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -160,6 +157,36 @@ public class EmailService {
         dados.put("nome", NOME_LOG);
 
         Template template = fmConfiguration.getTemplate("email-template-viagem.ftl");
+
+        //html
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+    }
+
+    public void enviarEmailAdminPossiveisClientes(String listaDados) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(from);
+            mimeMessageHelper.setSubject("Possíveis Clientes");
+
+            mimeMessageHelper.setText(getAdminPossiveisClientesTemplate(listaDados), true);
+
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (MessagingException | IOException | TemplateException  e) {
+            log.error("Error enviarEmailAdminPossiveisClientes");
+        }
+    }
+
+    private String getAdminPossiveisClientesTemplate(String listaDados)
+            throws IOException, TemplateException {
+
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("nomeUsuario", "Administrador");
+        dados.put("listaDados", listaDados);
+
+        Template template = fmConfiguration.getTemplate("email-template-admin-possiveis-clientes.ftl");
 
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
