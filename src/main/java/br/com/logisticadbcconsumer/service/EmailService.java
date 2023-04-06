@@ -191,15 +191,15 @@ public class EmailService {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
 
-    public void enviarEmailLogPorDia(LogPorDiaDTO logPorDiaDTO) {
+    public void enviarEmailLogPorDia(String mensagemFormatada) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo("lucaspalves8@gmail.com"); //TODO Email definido somente para testar - trocar depois
+            mimeMessageHelper.setTo(from);
             mimeMessageHelper.setSubject("Logs do dia");
 
-            mimeMessageHelper.setText(getLogPorDiaTemplate(logPorDiaDTO), true);
+            mimeMessageHelper.setText(getLogPorDiaTemplate(mensagemFormatada), true);
 
             emailSender.send(mimeMessageHelper.getMimeMessage());
 
@@ -208,11 +208,11 @@ public class EmailService {
         }
     }
 
-    private String getLogPorDiaTemplate(LogPorDiaDTO logPorDiaDTO)
+    private String getLogPorDiaTemplate(String mensagemFormatada)
             throws IOException, TemplateException {
 
         Map<String, Object> dados = new HashMap<>();
-        dados.put("logPorDia", logPorDiaDTO.getListDTo());
+        dados.put("listaLogs", mensagemFormatada);
         dados.put("emailContato", EMAIL_LOG);
         dados.put("nome", NOME_LOG);
 
@@ -222,6 +222,8 @@ public class EmailService {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
 }
+
+
 
 
 

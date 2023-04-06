@@ -10,7 +10,6 @@ import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -141,9 +140,11 @@ public class KafkaConsumidorService {
                                       @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
             throws JsonProcessingException {
         try {
-            LogPorDiaDTO logPorDiaDTO = objectMapper.readValue(mensagem, LogPorDiaDTO.class);
 
-            emailService.enviarEmailLogPorDia(logPorDiaDTO);
+            String mensagemFormatada = mensagem.replace("},", "}<br>");
+            mensagemFormatada = mensagemFormatada.replace("[", "<br>");
+
+            emailService.enviarEmailLogPorDia(mensagemFormatada);
 
             log.info("Partition " + partition +
                     " | consumeEmailLogPorDia");

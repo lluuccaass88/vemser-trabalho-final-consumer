@@ -13,12 +13,11 @@
     <div style="background-color: #f2f2f2; padding: 20px; font-family:courier;">
         <br>
         <br>
+        <H2<Ola Administrador!
         <br>
+        <br>Logs de hoje:
         <br>
-        <br>
-        <#list logDTO as logPorDiaDTO>
-          <p>${logPorDiaDTO}
-        </#list>
+        <br>${listaLogs}
         <br>
         <br>
         <br>
