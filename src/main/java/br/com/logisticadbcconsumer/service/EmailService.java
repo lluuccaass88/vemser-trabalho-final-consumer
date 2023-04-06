@@ -3,6 +3,7 @@ package br.com.logisticadbcconsumer.service;
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
+import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -74,7 +75,7 @@ public class EmailService {
             mimeMessageHelper.setText(getBoasVindasTemplate(usuarioBoasVindasDTO), true);
 
             emailSender.send(mimeMessageHelper.getMimeMessage());
-        } catch (MessagingException | IOException | TemplateException | NullPointerException e) {
+        } catch (MessagingException | IOException | TemplateException e) {
             log.error("Error enviarEmailPossivelCliente");
         }
     }
@@ -126,33 +127,35 @@ public class EmailService {
         return html;
     }
 
-    /*public void enviarEmailViagem(RotaEntity rota, ViagemEntity viagem, UsuarioEntity motorista) throws RegraDeNegocioException {
+    public void enviarEmailViagem(ViagemCriadaDTO viagemCriadaDTO) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(motorista.getEmail());
+            mimeMessageHelper.setTo(viagemCriadaDTO.getEmail());
             mimeMessageHelper.setSubject("Viagem Criada");
 
             String mensagem = "Foi atribuido a você uma nova viagem. Seguem os dados da viagem: ";
 
-            mimeMessageHelper.setText(getViagemTemplate(rota, viagem, motorista.getNome(), mensagem), true);
+            mimeMessageHelper.setText(getViagemTemplate(viagemCriadaDTO, mensagem), true);
 
             emailSender.send(mimeMessageHelper.getMimeMessage());
 
-        } catch (MessagingException | IOException | TemplateException |  NullPointerException e) {
-            throw new RegraDeNegocioException("Erro ao enviar email.");
+        } catch (MessagingException | IOException | TemplateException  e) {
+            log.error("Error enviarEmailViagem");
         }
     }
 
-    private String getViagemTemplate(RotaEntity rota, ViagemEntity viagem, String nomeUsuario,String mensagem)
+    private String getViagemTemplate(ViagemCriadaDTO viagemCriadaDTO, String mensagem)
             throws IOException, TemplateException {
 
         Map<String, Object> dados = new HashMap<>();
-        dados.put("nomeUsuario", nomeUsuario);
+        dados.put("nomeUsuario", viagemCriadaDTO.getNome());
         dados.put("mensagem", mensagem);
-        dados.put("rota", rota);
-        dados.put("viagem", viagem);
+        dados.put("partidaRota", viagemCriadaDTO.getPartidaRota());
+        dados.put("inicioViagenm", viagemCriadaDTO.getInicioViagem());
+        dados.put("destinoRota", viagemCriadaDTO.getDestinoRota());
+        dados.put("fimViagem", viagemCriadaDTO.getFimViagem());
         dados.put("emailContato", EMAIL_LOG);
         dados.put("nome", NOME_LOG);
 
@@ -160,7 +163,7 @@ public class EmailService {
 
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
-    }*/
+    }
 }
 
 

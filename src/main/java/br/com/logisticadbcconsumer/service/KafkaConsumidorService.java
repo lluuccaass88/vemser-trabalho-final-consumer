@@ -3,6 +3,7 @@ package br.com.logisticadbcconsumer.service;
 import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
 import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
+import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -86,6 +87,28 @@ public class KafkaConsumidorService {
 
         }catch (Exception e){
             log.error("Error | consumeEmailRecuperarSenha");
+        }
+    }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"3"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailViagem(@Payload String mensagem,
+                                           @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+            ViagemCriadaDTO viagemCriadaDTO = objectMapper.readValue(mensagem, ViagemCriadaDTO.class);
+
+            emailService.enviarEmailViagem(viagemCriadaDTO);
+
+            log.info("Partition " + partition +
+                    " | consumeEmailViagem | Email: {} ", viagemCriadaDTO.getEmail());
+
+        }catch (Exception e){
+            log.error("Error | consumeEmailViagem");
         }
     }
 }
