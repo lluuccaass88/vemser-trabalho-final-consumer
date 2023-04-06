@@ -1,0 +1,22 @@
+package br.com.logisticadbcconsumer.dto;
+
+import br.com.logisticadbcconsumer.enums.TipoOperacao;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class LogDTO {
+
+    private String id;
+
+    private String loginOperador;
+
+    private String descricao;
+
+    private String data;
+
+    private TipoOperacao tipoOperacao;
+}

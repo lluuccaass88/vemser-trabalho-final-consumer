@@ -1,9 +1,6 @@
 package br.com.logisticadbcconsumer.service;
 
-import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
-import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
+import br.com.logisticadbcconsumer.dto.*;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -164,6 +161,42 @@ public class EmailService {
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
+
+
+    public void enviarEmailLogPorDia(LogPorDiaDTO logPorDiaDTO) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo("lucaspalves8@gmail.com"); //TODO Email definido somente para testar - trocar depois
+            mimeMessageHelper.setSubject("Logs do dia");
+
+
+            mimeMessageHelper.setText(getLogPorDiaTemplate(logPorDiaDTO), true);
+
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (MessagingException | IOException | TemplateException  e) {
+            log.error("Error enviarEmailViagem");
+        }
+    }
+
+    private String getLogPorDiaTemplate(LogPorDiaDTO logPorDiaDTO)
+            throws IOException, TemplateException {
+
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("logPorDia", logPorDiaDTO.getListDTo());
+        dados.put("emailContato", EMAIL_LOG);
+        dados.put("nome", NOME_LOG);
+
+        Template template = fmConfiguration.getTemplate("email-template-viagem.ftl");
+
+        //html
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+    }
+
+
+
 }
 
 

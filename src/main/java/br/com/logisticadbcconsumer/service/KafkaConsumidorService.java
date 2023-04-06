@@ -1,9 +1,6 @@
 package br.com.logisticadbcconsumer.service;
 
-import br.com.logisticadbcconsumer.dto.PossiveisClientesDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioBoasVindasDTO;
-import br.com.logisticadbcconsumer.dto.UsuarioRecuperaSenhaDTO;
-import br.com.logisticadbcconsumer.dto.ViagemCriadaDTO;
+import br.com.logisticadbcconsumer.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -111,4 +108,28 @@ public class KafkaConsumidorService {
             log.error("Error | consumeEmailViagem");
         }
     }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"5"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailLogPorDia(@Payload String mensagem,
+                                   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+            LogPorDiaDTO logPorDiaDTO = objectMapper.readValue(mensagem, LogPorDiaDTO.class);
+
+            emailService.enviarEmailLogPorDia(logPorDiaDTO);
+
+            log.info("Partition " + partition +
+                    " | consumeEmailLogPorDia");
+
+        }catch (Exception e){
+            log.error("Error | consumeEmailViagem");
+        }
+    }
+
+
 }
