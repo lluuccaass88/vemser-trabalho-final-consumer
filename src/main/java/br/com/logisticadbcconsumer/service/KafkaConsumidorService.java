@@ -120,8 +120,9 @@ public class KafkaConsumidorService {
             throws JsonProcessingException {
         try {
 
-            mensagem.replace("},", "}<br>");
-            emailService.enviarEmailAdminPossiveisClientes(mensagem);
+            String mensagemFormatada = mensagem.replace("},", "}<br>");
+            mensagemFormatada = mensagemFormatada.replace("[", "<br>");
+            emailService.enviarEmailAdminPossiveisClientes(mensagemFormatada);
 
             log.info("Partition " + partition + " | consumeEmailAdminPossiveisClientes");
 
