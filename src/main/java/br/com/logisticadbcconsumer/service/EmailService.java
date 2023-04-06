@@ -166,6 +166,7 @@ public class EmailService {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(from);
             mimeMessageHelper.setSubject("Possíveis Clientes");
 
