@@ -11,23 +11,12 @@
     </div>
 
     <div style="background-color: #f2f2f2; padding: 20px; font-family:courier;">
+        <h2 align=center>Olá, ${nomeUsuario}!</h2>
         <br>
-        <br>
-        <H2<Ola Administrador!
         <br>
         <br>Logs de hoje:
         <br>
         <br>${listaLogs}
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>Qualquer dúvida é só contatar o suporte pelo email ->  ${emailContato}
-        <br>
-        <br>
-        <br>
-        <br>Atenciosamente,
-        <br><b>${nome}</b>
         <br>
         <br>
     </div>

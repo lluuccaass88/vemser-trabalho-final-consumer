@@ -143,11 +143,9 @@ public class KafkaConsumidorService {
 
             String mensagemFormatada = mensagem.replace("},", "}<br>");
             mensagemFormatada = mensagemFormatada.replace("[", "<br>");
-
             emailService.enviarEmailLogPorDia(mensagemFormatada);
 
-            log.info("Partition " + partition +
-                    " | consumeEmailLogPorDia");
+            log.info("Partition " + partition + " | consumeEmailLogPorDia");
 
         } catch (Exception e) {
             log.error("Error | consumeEmailLogPorDia");
