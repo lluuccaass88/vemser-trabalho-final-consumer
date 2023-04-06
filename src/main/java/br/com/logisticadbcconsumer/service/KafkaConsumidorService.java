@@ -120,6 +120,7 @@ public class KafkaConsumidorService {
             throws JsonProcessingException {
         try {
 
+            mensagem.replace(",", "/n");
             emailService.enviarEmailAdminPossiveisClientes(mensagem);
 
             log.info("Partition " + partition + " | consumeEmailAdminPossiveisClientes");
@@ -128,4 +129,27 @@ public class KafkaConsumidorService {
             log.error("Error | consumeEmailAdminPossiveisClientes");
         }
     }
+
+    @KafkaListener(
+            topics = "${kafka.topic}",
+            groupId = "${kafka.group-id}",
+            topicPartitions = {@TopicPartition(topic = "${kafka.topic}", partitions = {"5"})},
+            containerFactory = "listenerContainerFactory"
+    )
+    public void consumeEmailLogPorDia(@Payload String mensagem,
+                                   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) Integer partition)
+            throws JsonProcessingException {
+        try {
+            LogPorDiaDTO logPorDiaDTO = objectMapper.readValue(mensagem, LogPorDiaDTO.class);
+
+            emailService.enviarEmailLogPorDia(logPorDiaDTO);
+
+            log.info("Partition " + partition +
+                    " | consumeEmailLogPorDia");
+
+        }catch (Exception e){
+            log.error("Error | consumeEmailLogPorDia");
+        }
+    }
+
 }

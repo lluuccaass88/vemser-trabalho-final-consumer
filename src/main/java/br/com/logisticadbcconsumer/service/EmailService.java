@@ -166,7 +166,6 @@ public class EmailService {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(from);
             mimeMessageHelper.setSubject("Possíveis Clientes");
 
@@ -187,6 +186,36 @@ public class EmailService {
         dados.put("listaDados", listaDados);
 
         Template template = fmConfiguration.getTemplate("email-template-admin-possiveis-clientes.ftl");
+
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+    }
+
+    public void enviarEmailLogPorDia(LogPorDiaDTO logPorDiaDTO) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo("lucaspalves8@gmail.com"); //TODO Email definido somente para testar - trocar depois
+            mimeMessageHelper.setSubject("Logs do dia");
+
+            mimeMessageHelper.setText(getLogPorDiaTemplate(logPorDiaDTO), true);
+
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (MessagingException | IOException | TemplateException  e) {
+            log.error("Error enviarEmailLogPorDia");
+        }
+    }
+
+    private String getLogPorDiaTemplate(LogPorDiaDTO logPorDiaDTO)
+            throws IOException, TemplateException {
+
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("logPorDia", logPorDiaDTO.getListDTo());
+        dados.put("emailContato", EMAIL_LOG);
+        dados.put("nome", NOME_LOG);
+
+        Template template = fmConfiguration.getTemplate("email-template-log-por-dia.ftl");
 
         //html
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
