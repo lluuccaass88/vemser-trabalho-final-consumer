@@ -1,2 +1,3 @@
-# vemser-trabalho-final-consumer
-Consumer para enviar email referente ao sistema TruckLog, desenvolvido durante o vemserdbc.
+# Cemser-Trabalho-Final-Consumer
+Repositório contendo um exemplo prático de consumer Kafka em Java, desenvolvido como parte do curso “Vem Ser DBC”.
+
